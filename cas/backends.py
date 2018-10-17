@@ -32,6 +32,12 @@ __all__ = ['CASBackend']
 
 logger = logging.getLogger(__name__)
 
+# Determine verification URL
+try:
+    CAS_SERVER_URL = settings.CAS_SERVER_VERIFICATION_URL
+except AttributeError:
+    CAS_SERVER_URL = settings.CAS_SERVER_URL
+
 
 def _verify_cas1(ticket, service):
     """
@@ -44,8 +50,7 @@ def _verify_cas1(ticket, service):
     """
 
     params = {'ticket': ticket, 'service': service}
-    url = (urljoin(settings.CAS_SERVER_URL, 'validate') + '?' +
-           urlencode(params))
+    url = urljoin(CAS_SERVER_URL, 'validate') + '?' + urlencode(params)
     page = urlopen(url)
 
     try:
@@ -82,8 +87,7 @@ def _internal_verify_cas(ticket, service, suffix):
     if settings.CAS_PROXY_CALLBACK:
         params['pgtUrl'] = settings.CAS_PROXY_CALLBACK
 
-    url = (urljoin(settings.CAS_SERVER_URL, suffix) + '?' +
-           urlencode(params))
+    url = urljoin(CAS_SERVER_URL, suffix) + '?' + urlencode(params)
 
     page = urlopen(url)
 
@@ -150,8 +154,7 @@ def verify_proxy_ticket(ticket, service):
 
     params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
-           urlencode(params))
+    url = urljoin(CAS_SERVER_URL, 'proxyValidate') + '?' + urlencode(params)
 
     page = urlopen(url)
 
